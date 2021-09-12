@@ -1,0 +1,8 @@
+#!/usr/bin/env sh
+
+if [[ $(command -v lazygit) ]]; then
+	lazygit
+else
+	tmux display-message 'lazygit is not installed'
+fi
+
