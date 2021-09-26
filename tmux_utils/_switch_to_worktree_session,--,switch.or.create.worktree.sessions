@@ -1,0 +1,53 @@
+#!/usr/bin/env sh
+
+# check wheather we aren in a git repository or exit otherwise
+git rev-parse --git-dir > /dev/null 2>&1
+if [[ -d .git ]] || [[ $? -eq 1 ]]; then
+	GIT_DIR=$(git rev-parse --show-toplevel)
+else
+	echo 'Not inside git repository'
+	exit 1
+fi
+
+SOURCE_DIR="$GIT_DIR"
+GIT_CMD='git --no-pager'
+WORKTREE_EXISTS=0   # False
+WORKTREE_PREFIX=''
+
+# input the branch name using fzf
+BRANCH=$($GIT_CMD branch --list | fzf --prompt='Worktree branch: ' --reverse)
+
+if [[ -z "$BRANCH" ]]; then
+	echo "Exiting..."; exit 1
+fi
+
+
+# figure out from the name of the branch if we already have a targeted worktree
+if [[ "${BRANCH}" =~ ^[*+] ]]; then
+	BRANCH=${BRANCH//[*+ ]/}
+	WORKTREE_EXISTS=1;
+else
+	BRANCH=${BRANCH// /}
+fi
+
+# check if the brnach is already worktreed in another path
+# if it is then put user straight into that directory with opening nvim
+if (( $WORKTREE_EXISTS )); then
+	WORKTREE_PATH=$($GIT_CMD worktree list | awk -v "BRANCH=$BRANCH" '$3 ~ BRANCH { print $1 }')
+	tmux has-session -t "$BRANCH" >&2 2>/dev/null
+	if [[ $? -ne 0 ]]; then
+		tmux new-session -d -s "$BRANCH" -c "$WORKTREE_PATH"
+	fi
+	exit 0
+fi
+
+# finally create a workree at the target worktree location and create required symlinks.
+TARGET_DIR="$WORKTREEDIR/$BRANCH"
+git worktree add "$TARGET_DIR" "$BRANCH"
+pushd "$TARGET_DIR"
+# yellow class specific for now 
+ln -s "$GIT_DIR/node_modules" ./node_modules
+ln -s "$GIT_DIR/.env" .env 
+popd
+tmux new-session -d -s "$BRANCH" -c "$WORKTREE_PATH" 'nvim'
+tmux display-message  "New session created successfully."

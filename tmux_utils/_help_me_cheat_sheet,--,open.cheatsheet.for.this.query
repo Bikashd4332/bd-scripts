@@ -1,0 +1,11 @@
+#!/usr/bin/env sh
+
+# read the query
+read -p "Query: " query
+
+CHEAT_SHEET="https://cheat.sh/"
+
+if [[ -n "$query" ]];
+then
+	curl -fSsL "${CHEAT_SHEET}$query" | less
+fi

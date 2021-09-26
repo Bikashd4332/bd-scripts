@@ -1,0 +1,28 @@
+#!/usr/bin/env sh
+
+ORG_DIRECTORIES="~/Documents/org"
+TODO_FILE_FRAGMENT_NAME=$(date "+%Y-%m-%d")
+get_project_name () {
+	PROJECT_NAME=$(echo 'yellowclass-todos;personal' \
+		| sed -e 's/;/\n/g' \
+		| fzf --reverse)
+}
+
+get_in_popup_or_window () {
+	FLAGS=$(echo 'in a new window\nin popup' | fzf --reverse)
+}
+
+get_project_name
+get_in_popup_or_window
+
+TARGET_TODO_FILE="$ORG_DIRECTORIES/$PROJECT_NAME/$TODO_FILE_FRAGMENT_NAME.org" 
+
+# open emacs on the targetted day for task management.
+CMD="emacs --file=$TARGET_TODO_FILE";
+
+# open the file with emacs thats it.
+if [[ $FLAGS =~ "popup" ]]; then
+	`$CMD`
+else
+	tmux new-window -n 'Task management' "$CMD"
+fi

@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+get_player_flags () {
+	case "$@" in 
+		"video once") echo '' ;;
+		"video loop") echo '-l' ;;
+		"audio loop") echo '-lm' ;;
+		"audio once") echo '-m' ;;
+	esac
+}
+
+CHOICE=$(printf "audio loop\nvideo loop\naudio once\nvideo once" | fzf --prompt "run with: " --reverse)
+
+FLAGS=$(get_player_flags "$CHOICE")
+
+CMD="ytfzf $FLAGS"
+
+if [[ $(command -v ytfzf) ]]; then
+	tmux split-window -v -l '30%' "$CMD"
+else
+	echo "ytfzf not found"
+fi
+
+
+

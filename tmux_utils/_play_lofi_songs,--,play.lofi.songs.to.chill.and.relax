@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+YOTUBE_URL="https://www.youtube.com/watch?v=5qap5aO4i9A"
+
+if [[ $(command -v mpv) ]]; then
+	tmux new-window -d "mpv --no-video --volume=50 \"${YOTUBE_URL}\""
+else
+	echo "mpv is not found"
+fi

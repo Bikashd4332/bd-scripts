@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+NEW_WINDOW='new window'
+IN_POPUP='in popup'
+
+if [[ $(command -v lazygit) ]]; then
+	OPEN_IN=$(echo "$NEW_WINDOW\n$IN_POPUP" | fzf --prompt='Open in: ' --reverse)
+	if [[ "$OPEN_IN" == "$NEW_WINDOW" ]]; then
+		 tmux new-window -c '#{pane_current_path}' 'lazygit'
+	 else
+		 lazygit
+	fi
+else
+	tmux display-message 'lazygit is not installed'
+fi
+
