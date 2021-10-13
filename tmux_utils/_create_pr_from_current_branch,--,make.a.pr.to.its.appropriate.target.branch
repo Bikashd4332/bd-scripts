@@ -1,0 +1,62 @@
+#!/usr/bin/env bash
+
+# =====  Things to automate. ======
+# automation for making frontend PRs
+ # Reviewers: Ankit, Pranab, Ravik
+ # Asignee: Me
+ # Label: intelligently figure that out with the below step.
+
+	 # only a single branch with no other branch and no dev substring inside it
+			# DO NOTHING
+
+	 # check if the current branch has any 'dev' , 'develop' substring inside it.
+		# Choose the label feat->develop
+
+	 # check if there exists another branch with few names matching the existing branch.
+	 # and the other branch has dev in it.
+		 # Fallback to label feat->@staging for the current branch.
+
+GIT_CMD="git --no-pager"
+
+# check if inside git repository.
+if ! git rev-parse --git-dir >/dev/null 2>&1 ; then
+	echo -e "\033[31m Fatal: Not Inside git repository. \033[0m"
+	exit 1;
+fi
+
+BRANCH=$($GIT_CMD branch --show-current)
+IS_MULTIPLE_BRANCHES=0
+IS_OTHER_BRANCH_DEV=0
+TICKET=''
+
+# check if the branch has any mention dev, develop inside of it.
+if [[ $(echo "$BRANCH" | grep -oE 'dev(elop)?') ]]; then
+	# make the dev pr.
+	gh pr create \
+		--reviewer g-ravity,pranabs1ngh,anku255 \
+		--assignee Bikashd4332
+		--label 'feat->develop' \
+		--fill \
+		--base @staging \
+		--head "$BRANCH"
+		exit 0
+fi
+
+# Parse the jira ticket and find if there any other branch with the same name.
+TICKET=$(echo "$BRANCH" | grep -oE 'YT-\d+')
+
+for TICKET_BRANCH in $($GIT_CMD branch --list | grep -oiE "([a-z]+/)?$TICKET.*"); do
+	if [[ $TICKET_BRANCH =~ dev(elop)? ]] && [[ $TICKET_BRANCH != $BRANCH ]]; then
+		IS_OTHER_BRANCH_DEV=1
+	fi
+done
+
+if [[ $IS_OTHER_BRANCH_DEV ]]; then
+	# make the stage pr.
+	gh pr create \
+		--label 'feat->staging' \
+		--assignee Bikashd4332
+		--fill \
+		--base @staging \
+		--head "$BRANCH"
+fi

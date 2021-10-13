@@ -18,7 +18,7 @@ WORKTREE_PREFIX=''
 BRANCH=$($GIT_CMD branch --list | fzf --prompt='Worktree branch: ' --reverse)
 
 if [[ -z "$BRANCH" ]]; then
-	echo "Exiting..."; exit 1
+	echo -e "Fatal: No Branch name found.\n Exiting."; exit 1
 fi
 
 

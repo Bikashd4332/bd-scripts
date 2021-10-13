@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+REMOTE_URL=$(git remote get-url origin);
+
+if echo "$REMOTE_URL" | grep -oE 'yc-frontend'; then
+	tmux new-window -d 'yarn run dev'
+else
+	echo -e "\033[31m Sorry, Not inside yc-frontend repo.\033[0m"
+fi
