@@ -32,13 +32,7 @@ TICKET=''
 # check if the branch has any mention dev, develop inside of it.
 if [[ $(echo "$BRANCH" | grep -oE 'dev(elop)?') ]]; then
 	# make the dev pr.
-	gh pr create \
-		--reviewer g-ravity,pranabs1ngh,anku255 \
-		--assignee Bikashd4332
-		--label 'feat->develop' \
-		--fill \
-		--base @staging \
-		--head "$BRANCH"
+	gh pr create --reviewer g-ravity,pranabs1ngh,anku255 --assignee Bikashd4332 --label 'feat->develop' --fill --base @staging --head "$BRANCH"
 		exit 0
 fi
 
@@ -53,10 +47,5 @@ done
 
 if [[ $IS_OTHER_BRANCH_DEV ]]; then
 	# make the stage pr.
-	gh pr create \
-		--label 'feat->staging' \
-		--assignee Bikashd4332
-		--fill \
-		--base @staging \
-		--head "$BRANCH"
+	gh pr create --label 'feat->staging' --assignee Bikashd4332 --fill --base @staging --head "$BRANCH"
 fi
