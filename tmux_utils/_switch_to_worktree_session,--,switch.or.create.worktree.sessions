@@ -1,4 +1,5 @@
 #!/usr/bin/env sh
+set -x
 
 # check wheather we aren in a git repository or exit otherwise
 git rev-parse --git-dir > /dev/null 2>&1
@@ -52,10 +53,10 @@ git worktree add "$TARGET_DIR" "$BRANCH"
 if [[ -d $TARGET_DIR ]]; then
 	pushd "$TARGET_DIR"
 	# yellow class specific for now 
-	ln -s "$GIT_DIR/node_modules" ./node_modules
-	ln -s "$GIT_DIR/.env" .env 
+	ln -s "$WORKTREEDIR/@staging/node_modules" ./node_modules
+	ln -s "~/workspace/yc-frontend-develop.env" .env 
 	popd
-	tmux new-session -d -s "$BRANCH" -c "$WORKTREE_PATH" 'nvim'
+	tmux new-session -d -s "$BRANCH" -c "$TARGET_DIR" 'nvim'
 	tmux display-message  "New session created successfully."
 else 
 	echo '\033[31mError: Check git worktree\033[0m'
