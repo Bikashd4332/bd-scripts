@@ -1,17 +1,30 @@
 #!/usr/bin/env bash
+set -e
 
 # Things to Automate ###
 # =========================
 # New workflow of working on a new task.
 # read the task number and its type (fix or feat). and create the required branch in a worktree
 
+TOOD: 
+# create two branches of the task from the same common parent.
+# on with -dev prefix and the other without.
+
 read -p "Ticket number: " TICKET
+
+# make sure that it only contains digit.
+if [[ $TICKET =~ YT* ]]; then
+	TICKET=${TICKET//YT/}
+fi
+
+
 TICKET_TYPE=$(echo -e "feat\nbugfix" | fzf --prompt='Ticket type: ' --reverse)
 FORK_BRANCH=@staging
 
 BRANCH="$TICKET_TYPE/YT-$TICKET" 
 
 git worktree add -b "$BRANCH" "$WORKTREEDIR/$BRANCH" "$FORK_BRANCH"
+git branch "$BRANCH-dev" "$FORK_BRANCH"
 
 if [[ $? -eq 0 ]]; then
 	~/scripts/tmux_utils/_switch_to_worktree_session,--,switch.or.create.worktree.sessions "* $BRANCH"
