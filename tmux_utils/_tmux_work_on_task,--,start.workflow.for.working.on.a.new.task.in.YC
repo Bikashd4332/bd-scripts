@@ -6,7 +6,7 @@ set -e
 # New workflow of working on a new task.
 # read the task number and its type (fix or feat). and create the required branch in a worktree
 
-TOOD: 
+# TOOD: 
 # create two branches of the task from the same common parent.
 # on with -dev prefix and the other without.
 

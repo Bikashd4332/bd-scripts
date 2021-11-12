@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+set -x
+
+# every single directory in my $WORKDIR is a project.
+
+# find git projects inside a directory and return the full path of those projects.
+find_git_projects() {
+	find "$@" -maxdepth 3 -type d -name .git -or -type f -name .git -print0 | xargs -0 -n1 dirname
+}
+
+# create a fzf search list of all projects.
+selected_project=$(find_git_projects "$WORKTREEDIR" ~/workspace | fzf)
+selected_name=$(basename "$selected_project")
+
+tmux_running=$(pgrep tmux)
+TMUX_CMD="tmux"
+if [[ -z $TMUX ]] && [[ -z $tmux_running ]]; then
+	$TMUX_CMD new-session -s $selected_name -c $selected_project
+	exit 0
+fi
+
+if ! tmux has-session -t $selected_name 2> /dev/null; then
+	$TMUX_CMD new-session -ds $selected_name -c $selected_project
+fi
+
+if [[ -z $TMUX ]]; then
+ $TMUX_CMD attach-session -t "=$selected_name"
+else
+	$TMUX_CMD switch-client -t "=$selected_name"
+fi
+

@@ -1,12 +1,13 @@
 #!/usr/bin/env bash
+set -x
 
-NEW_WINDOW='new window'
-IN_POPUP='in popup'
+new_window='new window'
+in_popup='in popup'
 
 
 if [[ $(command -v lazygit) ]]; then
-	OPEN_IN=$(printf "$NEW_WINDOW\n$IN_POPUP" | fzf --prompt='Open in: ' --reverse)
-	if [[ "$OPEN_IN" == "$NEW_WINDOW" ]]; then
+	open_in=$(printf "$new_window\n$in_popup" | fzf --prompt='Open in: ' --reverse)
+	if [[ "$open_in" == "$new_window" ]]; then
 		 tmux new-window -c '#{pane_current_path}' 'lazygit'
 	 else
 		 lazygit

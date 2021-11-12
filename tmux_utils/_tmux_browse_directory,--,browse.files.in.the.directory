@@ -1,11 +1,17 @@
 #!/usr/bin/env sh
 
-DIR=$(fzf ~)
+dir=$(echo $WORKTREEDIR/**/** | tr ' ' '\n' | fzf)
 
 if [[ $(command -v ranger) ]]; 
 then
-	read -p 'Browse: '  BROWSE_DIR
-	tmux split-window -v "ranger ${BROWSE_DIR:-${DIR}}"
+	# if dir has value then we will use it else we wil ask the 
+	# user to select a directory
+	if [[ -z $dir ]]; 
+	then
+		read -p 'Browse: ' browse_dir
+		tmux split-window -v "ranger ${dir}"
+	fi
+	tmux split-window -v "ranger ${browse_dir}"
 else
 	echo "range is not found"
 fi
