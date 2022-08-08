@@ -1,0 +1,11 @@
+#!/usr/bin/env sh
+
+# read the query
+read -p "Youtube Channel Link: " link
+
+CHEAT_SHEET="https://cheat.sh/"
+
+if [[ -n "$link" ]];
+then
+youtube-dl -w --no-mtime -o "%(title)s.%(ext)s" -f best --external-downloader aria2c --external-downloader-args "-j 16 -x 16 -s 16 -k 1M" -v "$link"
+fi

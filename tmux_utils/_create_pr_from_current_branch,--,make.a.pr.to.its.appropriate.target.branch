@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-set -e
 
 # =====  Things to automate. ======
 # automation for making frontend PRs

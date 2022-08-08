@@ -1,5 +1,4 @@
 #!/usr/bin/env sh
-set -e
 
 # check wheather we aren in a git repository or exit otherwise
 git rev-parse --git-dir > /dev/null 2>&1
